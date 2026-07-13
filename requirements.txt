@@ -1,0 +1,10 @@
+mlflow
+numpy
+pandas
+pyarrow
+pytest
+scikit-learn
+scipy
+skops
+torch
+tqdm

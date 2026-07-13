@@ -1,0 +1,11 @@
+# Virtual environment
+myvenv/
+venv/
+ENV/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Local MLflow sqlite or run artifacts (if large/temporary)
+# mlruns/
