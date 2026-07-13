@@ -27,12 +27,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 4. Build the Docker Image
+    # 4. RUN AUTOMATED UNIT TESTS (NEW STEP)
+    - name: Run Pytest Suite
+      run: |
+        pytest
+
+    # 5. Build the Docker Image
     - name: Build Docker Image
       run: |
         docker build -t predictive-maintenance-api:latest .
 
-    # 5. Run and Test Docker Container
+    # 6. Run and Test Docker Container
     - name: Test Docker Container Execution
       run: |
         # Run container in background (-d)
