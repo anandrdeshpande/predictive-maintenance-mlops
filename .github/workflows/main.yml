@@ -1,6 +1,5 @@
 name: MLOps CI/CD Pipeline
 
-# Trigger this workflow on every push or pull request to the main branch
 on:
   push:
     branches: [ "main" ]
@@ -12,13 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout project repository code
+    # 1. Checkout project repository code (Updated to v4)
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    # 2. Set up Python environment
+    # 2. Set up Python environment (Updated to v5)
     - name: Set up Python 3.9
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
@@ -39,8 +38,11 @@ jobs:
         # Run container in background (-d)
         docker run -d -p 8000:8000 --name test-api predictive-maintenance-api:latest
         
-        # Give the container a few seconds to start Uvicorn
-        sleep 5
+        # Give Uvicorn 10 seconds to spin up completely
+        sleep 10
         
-        # Test the health check endpoint using curl
-        curl http://localhost:8000/
+        # Output running container logs for debugging visibility
+        docker logs test-api
+        
+        # Test the health check endpoint
+        curl -f http://localhost:8000/
