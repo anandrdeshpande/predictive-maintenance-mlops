@@ -24,7 +24,6 @@ model = sio.load(model_path, trusted=untrusted_types)
 #    "mlruns/1/models/m-820413bb7e19466f8a9431d945683e7d/artifacts/model.skops",
 #    trusted=True,
 #)
-
 #model = mlflow.pyfunc.load_model("mlruns/1/models/m-820413bb7e19466f8a9431d945683e7d/artifacts")
 #model = mlflow.sklearn.load_model("mlruns/1/models/m-b13e5643d8414aff99d8135b8f91413e/artifacts")
 #model = mlflow.sklearn.load_model("mlruns/1/YOUR_RUN_ID/artifacts/model")
