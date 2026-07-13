@@ -35,6 +35,10 @@ def train_model(data_path="sensor_data.csv", model_output_path="model.skops"):
         # 3. Save model using skops
         sio.dump(model, model_output_path)
         print(f"[SAVED] Saved newly trained model to '{model_output_path}'")
+        
+        # 2. ALSO log the model artifact inside mlruns for historical tracking
+        mlflow.log_artifact(model_output_path)
+        print(f"[MLFLOW] Archived model artifact in mlruns/")
 
 if __name__ == "__main__":
     train_model()
