@@ -5,6 +5,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pandas as pd
 
+os.environ["MLFLOW_ALLOW_FILE_STORE"] = "true"
 app = FastAPI(title="Predictive Maintenance API")
 
 mlflow.set_tracking_uri("file:./mlruns")
@@ -13,7 +14,7 @@ mlflow.set_tracking_uri("file:./mlruns")
 MODEL_URI = "models:/PredictiveMaintenanceModel@champion"
 FALLBACK_MODEL_PATH = "model.skops"
 
-print(MODEL_URI)
+#print(MODEL_URI)
 model = None
 
 # Load the model directly from MLflow Registry
