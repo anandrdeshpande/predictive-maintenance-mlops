@@ -35,8 +35,6 @@ class SensorData(BaseModel):
     vibration: float
     pressure: float
 
-
-
 @app.get("/")
 def home():
     return {"status": "API is running!"}

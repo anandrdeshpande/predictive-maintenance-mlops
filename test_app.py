@@ -17,7 +17,6 @@ def test_prediction_endpoint():
         "temperature": 85.5,
         "vibration": 0.02,
         "pressure": 101.3,
-        "rotational_speed": 1500
     }
     
     response = client.post("/predict", json=payload)
