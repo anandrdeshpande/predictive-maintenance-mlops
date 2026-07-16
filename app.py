@@ -52,8 +52,13 @@ def predict(data: SensorData):
         raise HTTPException(status_code=500, detail="Model is not loaded.")
     
     # Convert input pydantic payload into a pandas DataFrame
-    input_df = pd.DataFrame([data.dict()])
+    input_df = pd.DataFrame([data.model_dump()])
     
     # Predict using the loaded MLflow PyFunc model
-    prediction = model.predict(input_df)
-    return {"prediction": int(prediction[0])}
+
+    try:
+        prediction = model.predict(input_df)
+    except Exception:
+        prediction = model.predict(input_df.values)
+        
+    return {"prediction": int(prediction[0])}        
