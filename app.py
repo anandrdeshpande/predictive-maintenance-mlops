@@ -1,55 +1,44 @@
-import mlflow.sklearn
-import pandas as pd
-from fastapi import FastAPI
+import mlflow.pyfunc
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import skops.io as sio
+import pandas as pd
 
 app = FastAPI(title="Predictive Maintenance API")
 
-# Load our trained model artifact from MLflow (adjust run path as needed)
-# For this example, we assume the model was saved locally or logged
+# URI pointing to the model tagged with alias '@champion'
+MODEL_URI = "models:/PredictiveMaintenanceModel@champion"
 
-# Path to your saved model file
-model_path = (
-    "mlruns/1/models/m-820413bb7e19466f8a9431d945683e7d/artifacts/model.skops"
-)
+# Load the model directly from MLflow Registry
+try:
+    model = mlflow.pyfunc.load_model(MODEL_URI)
+    print(f"[LOADED] Successfully loaded active model from: {MODEL_URI}")
+except Exception as e:
+    model = None
+    print(f"[WARNING] Could not load model from registry: {e}")
 
-# 1. Get the list of untrusted types found inside the model file
-untrusted_types = sio.get_untrusted_types(file=model_path)
-
-# 2. Pass those types as trusted to load the model securely
-model = sio.load(model_path, trusted=untrusted_types)
-
-#model = sio.load(
-#    "mlruns/1/models/m-820413bb7e19466f8a9431d945683e7d/artifacts/model.skops",
-#    trusted=True,
-#)
-#model = mlflow.pyfunc.load_model("mlruns/1/models/m-820413bb7e19466f8a9431d945683e7d/artifacts")
-#model = mlflow.sklearn.load_model("mlruns/1/models/m-b13e5643d8414aff99d8135b8f91413e/artifacts")
-#model = mlflow.sklearn.load_model("mlruns/1/YOUR_RUN_ID/artifacts/model")
-# mlruns\1\models\m-b13e5643d8414aff99d8135b8f91413e\artifacts
-
-# Define the input data schema
+# Define input schema matching your dataset features
 class SensorData(BaseModel):
-    temperature: float
-    vibration: float
-    pressure: float
-
+    air_temperature: float
+    process_temperature: float
+    rotational_speed: float
+    torque: float
+    tool_wear: float
 
 @app.get("/")
-def home():
-    return {"status": "API is running!"}
-
+def read_root():
+    return {
+        "status": "API is running",
+        "active_model_uri": MODEL_URI
+    }
 
 @app.post("/predict")
 def predict(data: SensorData):
-    # Convert input JSON to DataFrame
-    input_data = pd.DataFrame([data.dict()])
-
-    # Generate prediction (0 = Normal, 1 = Failure)
-    prediction = model.predict(input_data)[0]
-
-    return {
-        "prediction": int(prediction),
-        "status": "Failure Detected ⚠️" if prediction == 1 else "Normal Operational State ✅",
-    }
+    if model is None:
+        raise HTTPException(status_code=500, detail="Model is not loaded.")
+    
+    # Convert input pydantic payload into a pandas DataFrame
+    input_df = pd.DataFrame([data.dict()])
+    
+    # Predict using the loaded MLflow PyFunc model
+    prediction = model.predict(input_df)
+    return {"prediction": int(prediction[0])}
