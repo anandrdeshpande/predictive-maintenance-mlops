@@ -7,10 +7,13 @@ import pandas as pd
 
 app = FastAPI(title="Predictive Maintenance API")
 
+mlflow.set_tracking_uri("file:./mlruns")
+
 # URI pointing to the model tagged with alias '@champion'
 MODEL_URI = "models:/PredictiveMaintenanceModel@champion"
 FALLBACK_MODEL_PATH = "model.skops"
 
+print(MODEL_URI)
 model = None
 
 # Load the model directly from MLflow Registry
