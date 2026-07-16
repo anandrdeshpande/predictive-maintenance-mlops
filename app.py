@@ -18,18 +18,20 @@ except Exception as e:
 
 # Define input schema matching your dataset features
 class SensorData(BaseModel):
-    air_temperature: float
-    process_temperature: float
-    rotational_speed: float
-    torque: float
-    tool_wear: float
+    temperature: float
+    vibration: float
+    pressure: float
+
+#@app.get("/")
+#def read_root():
+#    return {
+#        "status": "API is running!",
+#        "active_model_uri": MODEL_URI
+#    }
 
 @app.get("/")
-def read_root():
-    return {
-        "status": "API is running!",
-        "active_model_uri": MODEL_URI
-    }
+def home():
+    return {"status": "API is running!"}
 
 @app.post("/predict")
 def predict(data: SensorData):
