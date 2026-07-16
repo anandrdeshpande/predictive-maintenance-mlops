@@ -27,7 +27,7 @@ class SensorData(BaseModel):
 @app.get("/")
 def read_root():
     return {
-        "status": "API is running",
+        "status": "API is running!",
         "active_model_uri": MODEL_URI
     }
 
